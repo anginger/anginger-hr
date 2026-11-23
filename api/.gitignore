@@ -1,5 +1,3 @@
-config.inc.php
-composer.lock
-test.php
 vendor/
-.idea/
+database.sqlite
+runtime/
