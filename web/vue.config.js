@@ -1,7 +1,7 @@
 module.exports = {
   pages: {
     index: {
-      title: 'Flip',
+      title: 'Anginger HR',
       entry: 'src/main.js',
       template: 'public/index.html',
       filename: 'index.html',

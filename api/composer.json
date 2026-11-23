@@ -1,19 +1,27 @@
 {
-  "name": "starinc/flip",
-  "type": "project",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Flip\\": "src/"
+    "name": "anginger/hr-api",
+    "description": "Anginger HR API, powered by Yii 2.",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0",
+        "yiisoft/yii2": "~2.0.0",
+        "ramsey/uuid": "^4.10"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "anginger\\": ""
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        },
+        "process-timeout": 600
     }
-  },
-  "authors": [
-    {
-      "name": "SuperSonic",
-      "email": "supersonic@livemail.tw"
-    }
-  ],
-  "require": {
-    "ext-pdo": "*"
-  }
 }
