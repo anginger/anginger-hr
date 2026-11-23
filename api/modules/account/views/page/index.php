@@ -42,25 +42,25 @@ AccountAsset::register($this);
     </div>
 
     <dialog class="ts-modal" :open="mode !== 0" @click.self="mode = 0">
-        <div class="content">
+        <form class="content" @submit.prevent="submit()">
             <h2 x-text="mode === 1 ? '新增帳號' : '編輯帳號'"></h2>
-            <p class="error" x-show="message" x-text="message"></p>
+            <p class="error" aria-live="polite" x-show="message" x-text="message"></p>
             <label class="app-field">員工
                 <div class="ts-input">
-                    <select x-model="form.uuid" :disabled="mode === 2">
+                    <select name="uuid" x-model="form.uuid" :disabled="mode === 2">
                         <template x-for="e in employees" :key="e.emp_id">
                             <option :value="e.emp_id" x-text="empLabel(e)"></option>
                         </template>
                     </select>
                 </div>
             </label>
-            <label class="app-field">帳號<div class="ts-input"><input x-model="form.username"></div></label>
-            <label class="app-field">密碼（留空表示不變）<div class="ts-input"><input type="password" x-model="form.password"></div></label>
+            <label class="app-field">帳號<div class="ts-input"><input name="username" autocomplete="off" spellcheck="false" x-model="form.username"></div></label>
+            <label class="app-field">密碼（留空表示不變）<div class="ts-input"><input type="password" name="password" autocomplete="new-password" x-model="form.password"></div></label>
             <div class="ts-buttons is-end-aligned">
-                <button class="ts-button is-outlined" @click="mode = 0">取消</button>
-                <button class="ts-button" @click="submit()" x-text="mode === 1 ? '送出' : '儲存'"></button>
+                <button class="ts-button is-outlined" type="button" @click="mode = 0">取消</button>
+                <button class="ts-button" type="submit" x-text="mode === 1 ? '送出' : '儲存'"></button>
             </div>
-        </div>
+        </form>
     </dialog>
 </div>
 <script>

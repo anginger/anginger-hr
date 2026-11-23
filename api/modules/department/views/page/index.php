@@ -42,13 +42,13 @@ DepartmentAsset::register($this);
     </div>
 
     <dialog class="ts-modal" :open="mode !== 0" @click.self="mode = 0">
-        <div class="content">
+        <form class="content" @submit.prevent="submit()">
             <h2 x-text="mode === 1 ? '新增部門' : '編輯部門'"></h2>
-            <p class="error" x-show="message" x-text="message"></p>
-            <label class="app-field">部門名稱<div class="ts-input"><input x-model="form.dep_name"></div></label>
+            <p class="error" aria-live="polite" x-show="message" x-text="message"></p>
+            <label class="app-field">部門名稱<div class="ts-input"><input name="dep_name" autocomplete="off" x-model="form.dep_name"></div></label>
             <label class="app-field">主管
                 <div class="ts-input">
-                    <select x-model="form.manager_emp_id">
+                    <select name="manager_emp_id" x-model="form.manager_emp_id">
                         <template x-for="e in employees" :key="e.emp_id">
                             <option :value="e.emp_id" x-text="empLabel(e)"></option>
                         </template>
@@ -56,10 +56,10 @@ DepartmentAsset::register($this);
                 </div>
             </label>
             <div class="ts-buttons is-end-aligned">
-                <button class="ts-button is-outlined" @click="mode = 0">取消</button>
-                <button class="ts-button" @click="submit()" x-text="mode === 1 ? '送出' : '儲存'"></button>
+                <button class="ts-button is-outlined" type="button" @click="mode = 0">取消</button>
+                <button class="ts-button" type="submit" x-text="mode === 1 ? '送出' : '儲存'"></button>
             </div>
-        </div>
+        </form>
     </dialog>
 </div>
 <script>

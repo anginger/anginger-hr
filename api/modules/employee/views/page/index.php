@@ -46,31 +46,31 @@ EmployeeAsset::register($this);
     </div>
 
     <dialog class="ts-modal" :open="mode !== 0" @click.self="mode = 0">
-        <div class="content">
+        <form class="content" @submit.prevent="submit()">
             <h2 x-text="mode === 1 ? '新增員工' : '編輯員工'"></h2>
-            <p class="error" x-show="message" x-text="message"></p>
-            <label class="app-field">姓名<div class="ts-input"><input x-model="form.emp_name"></div></label>
-            <label class="app-field">職稱<div class="ts-input"><input x-model="form.job_title"></div></label>
+            <p class="error" aria-live="polite" x-show="message" x-text="message"></p>
+            <label class="app-field">姓名<div class="ts-input"><input name="emp_name" autocomplete="off" x-model="form.emp_name"></div></label>
+            <label class="app-field">職稱<div class="ts-input"><input name="job_title" autocomplete="off" x-model="form.job_title"></div></label>
             <label class="app-field">部門
                 <div class="ts-input">
-                    <select x-model="form.dep_id">
+                    <select name="dep_id" x-model="form.dep_id">
                         <template x-for="d in departments" :key="d.dep_id">
                             <option :value="d.dep_id" x-text="d.dep_name"></option>
                         </template>
                     </select>
                 </div>
             </label>
-            <label class="app-field">縣市<div class="ts-input"><input x-model="form.city"></div></label>
-            <label class="app-field">地址<div class="ts-input"><input x-model="form.address"></div></label>
-            <label class="app-field">電話<div class="ts-input"><input x-model="form.phone"></div></label>
-            <label class="app-field">郵遞區號<div class="ts-input"><input x-model="form.zip_code"></div></label>
-            <label class="app-field">月薪<div class="ts-input"><input type="number" x-model="form.month_salary"></div></label>
-            <label class="app-field">年假天數<div class="ts-input"><input type="number" x-model="form.annual_leave"></div></label>
+            <label class="app-field">縣市<div class="ts-input"><input name="city" autocomplete="off" x-model="form.city"></div></label>
+            <label class="app-field">地址<div class="ts-input"><input name="address" autocomplete="off" x-model="form.address"></div></label>
+            <label class="app-field">電話<div class="ts-input"><input type="tel" name="phone" autocomplete="off" x-model="form.phone"></div></label>
+            <label class="app-field">郵遞區號<div class="ts-input"><input name="zip_code" autocomplete="off" x-model="form.zip_code"></div></label>
+            <label class="app-field">月薪<div class="ts-input"><input type="number" name="month_salary" autocomplete="off" x-model="form.month_salary"></div></label>
+            <label class="app-field">年假天數<div class="ts-input"><input type="number" name="annual_leave" autocomplete="off" x-model="form.annual_leave"></div></label>
             <div class="ts-buttons is-end-aligned">
-                <button class="ts-button is-outlined" @click="mode = 0">取消</button>
-                <button class="ts-button" @click="submit()" x-text="mode === 1 ? '送出' : '儲存'"></button>
+                <button class="ts-button is-outlined" type="button" @click="mode = 0">取消</button>
+                <button class="ts-button" type="submit" x-text="mode === 1 ? '送出' : '儲存'"></button>
             </div>
-        </div>
+        </form>
     </dialog>
 </div>
 <script>
