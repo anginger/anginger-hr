@@ -19,7 +19,7 @@ EmployeeAsset::register($this);
         <h1>員工管理</h1>
         <button class="ts-button" @click="openCreate()">+ 新增員工</button>
     </div>
-    <div class="ts-box">
+    <div class="ts-box is-flush">
         <table class="ts-table">
             <thead>
             <tr><th>姓名</th><th>部門</th><th>職稱</th><th>縣市</th><th>電話</th><th>月薪</th><th>年假</th><th></th></tr>
@@ -36,7 +36,7 @@ EmployeeAsset::register($this);
                     <td x-text="e.annual_leave"></td>
                     <td>
                         <button class="ts-button is-small is-outlined" @click="openEdit(e)">編輯</button>
-                        <button class="ts-button is-small is-negative" @click="remove(e)">刪除</button>
+                        <button class="ts-button is-small is-negative is-outlined" @click="remove(e)">刪除</button>
                     </td>
                 </tr>
             </template>
@@ -74,6 +74,6 @@ EmployeeAsset::register($this);
     </dialog>
 </div>
 <script>
-    window.__ITEMS__ = <?= json_encode($items) ?>;
-    window.__DEPARTMENTS__ = <?= json_encode($departments) ?>;
+    window.__ITEMS__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($items)) ?>;
+    window.__DEPARTMENTS__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($departments)) ?>;
 </script>

@@ -19,7 +19,7 @@ DepartmentAsset::register($this);
         <h1>部門管理</h1>
         <button class="ts-button" @click="openCreate()">+ 新增部門</button>
     </div>
-    <div class="ts-box">
+    <div class="ts-box is-flush">
         <table class="ts-table">
             <thead>
             <tr><th>部門代號</th><th>部門名稱</th><th>主管</th><th></th></tr>
@@ -32,7 +32,7 @@ DepartmentAsset::register($this);
                     <td x-text="managerName(d.manager_emp_id)"></td>
                     <td>
                         <button class="ts-button is-small is-outlined" @click="openEdit(d)">編輯</button>
-                        <button class="ts-button is-small is-negative" @click="remove(d)">刪除</button>
+                        <button class="ts-button is-small is-negative is-outlined" @click="remove(d)">刪除</button>
                     </td>
                 </tr>
             </template>
@@ -63,6 +63,6 @@ DepartmentAsset::register($this);
     </dialog>
 </div>
 <script>
-    window.__ITEMS__ = <?= json_encode($items) ?>;
-    window.__EMPLOYEES__ = <?= json_encode($employees) ?>;
+    window.__ITEMS__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($items)) ?>;
+    window.__EMPLOYEES__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($employees)) ?>;
 </script>

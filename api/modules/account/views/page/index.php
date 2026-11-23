@@ -19,7 +19,7 @@ AccountAsset::register($this);
         <h1>帳號管理</h1>
         <button class="ts-button" @click="openCreate()">+ 新增帳號</button>
     </div>
-    <div class="ts-box">
+    <div class="ts-box is-flush">
         <table class="ts-table">
             <thead>
             <tr><th>員工</th><th>帳號</th><th>建立時間</th><th></th></tr>
@@ -32,7 +32,7 @@ AccountAsset::register($this);
                     <td x-text="ts(u.created_time)"></td>
                     <td>
                         <button class="ts-button is-small is-outlined" @click="openEdit(u)">編輯</button>
-                        <button class="ts-button is-small is-negative" @click="remove(u)">刪除</button>
+                        <button class="ts-button is-small is-negative is-outlined" @click="remove(u)">刪除</button>
                     </td>
                 </tr>
             </template>
@@ -64,6 +64,6 @@ AccountAsset::register($this);
     </dialog>
 </div>
 <script>
-    window.__ITEMS__ = <?= json_encode($items) ?>;
-    window.__EMPLOYEES__ = <?= json_encode($employees) ?>;
+    window.__ITEMS__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($items)) ?>;
+    window.__EMPLOYEES__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($employees)) ?>;
 </script>
