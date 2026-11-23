@@ -7,58 +7,62 @@
 
 namespace anginger\controllers;
 
-use anginger\components\AccessFilter;
-use anginger\components\BaseController;
-use anginger\components\CurrentUser;
 use anginger\models\User;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Response;
 
+/**
+ * Session authentication.
+ *
+ *   GET    /api/authentic/session -> current user (200) or 401
+ *   POST   /api/authentic/session -> login, 201 or 401
+ *   DELETE /api/authentic/session -> logout, 204 or 401
+ */
 class AuthenticController extends BaseController
 {
     public function behaviors(): array
     {
         return array_merge(parent::behaviors(), [
-            'access' => [
-                'class' => AccessFilter::class,
-                'exceptActions' => ['post-session'],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'session' => ['GET', 'POST', 'DELETE'],
+                ],
             ],
         ]);
     }
 
-    /**
-     * GET /authentic/session - return the currently logged-in user (200) or 401.
-     */
-    public function actionGetSession(): Response
+    public function actionSession(): Response
     {
-        return $this->asJson(CurrentUser::get());
-    }
+        $request = Yii::$app->request;
+        switch ($request->method) {
+            case 'GET':
+                $identity = Yii::$app->user->identity;
+                if ($identity instanceof User) {
+                    return $this->asJson($identity);
+                }
+                return $this->unauthorized();
 
-    /**
-     * POST /authentic/session - log in with username & password, 201 on success.
-     */
-    public function actionPostSession(): Response
-    {
-        $request = Yii::$app->getRequest();
-        $username = $request->post('username');
-        $password = $request->post('password');
-        if ($username === null || $password === null) {
-            return $this->respondError(400, 'bad request');
-        }
-        $user = User::findByCredentials($username, $password);
-        if ($user === null) {
-            return $this->respondError(401, 'unauthorized');
-        }
-        Yii::$app->getSession()->set('user_id', $user->uuid);
-        return $this->respondEmpty(201);
-    }
+            case 'POST':
+                $form = $request->getBodyParams();
+                if (!isset($form['username']) || !isset($form['password'])) {
+                    return $this->badRequest();
+                }
+                $user = User::findByUsernameAndPassword(strval($form['username']), strval($form['password']));
+                if ($user === null) {
+                    return $this->unauthorized();
+                }
+                Yii::$app->user->login($user);
+                return $this->emptyResponse(201);
 
-    /**
-     * DELETE /authentic/session - log out, 204.
-     */
-    public function actionDeleteSession(): Response
-    {
-        Yii::$app->getSession()->remove('user_id');
-        return $this->respondEmpty(204);
+            case 'DELETE':
+                if (Yii::$app->user->isGuest) {
+                    return $this->unauthorized();
+                }
+                Yii::$app->user->logout();
+                return $this->emptyResponse(204);
+        }
+        return $this->badRequest();
     }
 }

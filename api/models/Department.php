@@ -30,22 +30,4 @@ class Department extends ActiveRecord
     {
         return $this->hasMany(Employee::class, ['dep_id' => 'dep_id']);
     }
-
-    /**
-     * Serialize the department together with its manager employee
-     * (including the manager's own department), as the SPA expects.
-     */
-    public function toArrayWithManager(): array
-    {
-        $data = $this->toArray();
-        $manager = null;
-        if ($this->manager_emp_id !== null) {
-            $employee = Employee::findOne(['emp_id' => $this->manager_emp_id]);
-            if ($employee !== null) {
-                $manager = $employee->toArrayWithDepartment();
-            }
-        }
-        $data['manager'] = $manager;
-        return $data;
-    }
 }

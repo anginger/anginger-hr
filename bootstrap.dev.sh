@@ -3,13 +3,12 @@
 #
 # Licensed under the MIT License (https://opensource.org/licenses/MIT)
 #
-# Local development bootstrap: Yii2 API on http://127.0.0.1:1270 and the
-# Vue dev server (defaults to http://localhost:8080, see web/.env).
+# Local development bootstrap: the whole app (server-rendered pages +
+# Alpine.js frontend + JSON API) is served by the PHP built-in server.
 set -e
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
-sh -c "cd '$ROOT/api' && composer install && php yii migrate --interactive=0 && php -S 127.0.0.1:1270 -t web web/index.php" &
-sh -c "cd '$ROOT/web' && npm install && npm run serve" &
+sh -c "cd '$ROOT/api' && composer install && php console.php migrate --interactive=0 && cd web && php -S 127.0.0.1:1270 index.php" &
 
 wait

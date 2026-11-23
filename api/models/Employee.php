@@ -32,15 +32,4 @@ class Employee extends ActiveRecord
     {
         return $this->hasOne(Department::class, ['dep_id' => 'dep_id']);
     }
-
-    /**
-     * Serialize the employee together with its department (as the SPA expects).
-     */
-    public function toArrayWithDepartment(): array
-    {
-        $data = $this->toArray();
-        $department = Department::find()->where(['dep_id' => $this->dep_id])->asArray()->one();
-        $data['department'] = $department;
-        return $data;
-    }
 }

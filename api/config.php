@@ -20,53 +20,46 @@ return [
             'dsn' => 'sqlite:@anginger/database.sqlite',
         ],
         'request' => [
-            'cookieValidationKey' => 'anginger-hr-change-me-in-production',
-            // The SPA authenticates with a session cookie and does not send
-            // CSRF tokens (same behaviour as the original API).
+            // required for the session cookie
+            'cookieValidationKey' => 'anginger-hr-dev-key-change-me-in-production',
+            // the Alpine.js frontend posts URLSearchParams via fetch(); also accept JSON bodies
             'enableCsrfValidation' => false,
             'parsers' => [
                 'application/json' => 'yii\\web\\JsonParser',
             ],
         ],
-        'session' => [
-            'name' => 'ANGINGERHR',
-            'cookieParams' => [
-                'httponly' => true,
-                'samesite' => 'Lax',
-            ],
+        // session-based authentication; pages are server-rendered HTML,
+        // API controllers return JSON explicitly via asJson()
+        'user' => [
+            'identityClass' => 'anginger\\models\\User',
+            'enableSession' => true,
+            'enableAutoLogin' => false,
+            'loginUrl' => null, // API returns 401/403 JSON instead of redirecting
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'GET authentic/session' => 'authentic/get-session',
-                'POST authentic/session' => 'authentic/post-session',
-                'DELETE authentic/session' => 'authentic/delete-session',
-
-                'GET manage' => 'manage/index',
-                'GET manage/employees' => 'manage/all-employees',
-                'GET manage/employee' => 'manage/get-employee',
-                'POST manage/employee' => 'manage/post-employee',
-                'PUT manage/employee' => 'manage/put-employee',
-                'DELETE manage/employee' => 'manage/delete-employee',
-                'GET manage/departments' => 'manage/all-departments',
-                'GET manage/department/employees' => 'manage/department-employees',
-                'GET manage/department' => 'manage/get-department',
-                'POST manage/department' => 'manage/post-department',
-                'PUT manage/department' => 'manage/put-department',
-                'PATCH manage/department' => 'manage/patch-department',
-                'DELETE manage/department' => 'manage/delete-department',
-
-                'GET setting' => 'setting/index',
-                'GET setting/users' => 'setting/all-users',
-                'GET setting/user' => 'setting/get-user',
-                'POST setting/user' => 'setting/post-user',
-                'PUT setting/user' => 'setting/put-user',
-                'DELETE setting/user' => 'setting/delete-user',
+                // pages
+                'login' => 'site/login',
+                'logout' => 'site/logout',
+                // every business domain is a module with its own page + JSON API
+                '<module:employee|department|account>' => '<module>/page/index',
+                // JSON API consumed by the Alpine.js frontend (fetch)
+                'api/authentic/<action:\w+>' => 'authentic/<action>',
+                'api/<module:employee|department|account>' => '<module>/api/index',
+                'api/<module:employee|department|account>/<action:\w+>' => '<module>/api/<action>',
             ],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+    ],
+    // application-level modules (NOT a component): each business domain
+    // owns its page route and its /api/* JSON API
+    'modules' => [
+        'employee' => 'anginger\\modules\\employee\\Module',
+        'department' => 'anginger\\modules\\department\\Module',
+        'account' => 'anginger\\modules\\account\\Module',
     ],
 ];

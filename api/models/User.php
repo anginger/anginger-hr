@@ -8,19 +8,50 @@
 namespace anginger\models;
 
 use yii\db\ActiveRecord;
-use yii\db\Query;
+use yii\web\IdentityInterface;
 
 /**
- * @property string $uuid employee ID this account belongs to
+ * Login account. `uuid` is the owning employee's emp_id.
+ *
+ * Passwords are stored as sha256 hashes, exactly like the old implementation
+ * (keeps the seeded admin/admin account working).
+ *
+ * @property string $uuid
  * @property string $username
- * @property string $password SHA-256 hex digest
- * @property int $created_time unix timestamp
+ * @property string $password
+ * @property int $created_time
  */
-class User extends ActiveRecord
+class User extends ActiveRecord implements IdentityInterface
 {
     public static function tableName(): string
     {
         return '{{%users}}';
+    }
+
+    public static function findIdentity($id): ?IdentityInterface
+    {
+        return static::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null): ?IdentityInterface
+    {
+        // Session-based authentication only, no bearer tokens.
+        return null;
+    }
+
+    public function getId(): string
+    {
+        return $this->uuid;
+    }
+
+    public function getAuthKey(): string
+    {
+        return hash('sha256', $this->uuid . $this->password);
+    }
+
+    public function validateAuthKey($authKey): bool
+    {
+        return $this->getAuthKey() === $authKey;
     }
 
     public function getEmployee(): \yii\db\ActiveQuery
@@ -29,48 +60,36 @@ class User extends ActiveRecord
     }
 
     /**
-     * Passwords are stored as SHA-256 hex digests (kept for compatibility
-     * with the original schema, e.g. the seeded admin/admin account).
+     * Finds a user by username and plain-text password.
      */
-    public static function hashPassword(string $password): string
-    {
-        return hash('sha256', $password);
-    }
-
-    public static function findByCredentials(string $username, string $password): ?self
+    public static function findByUsernameAndPassword(string $username, string $password): ?User
     {
         return static::findOne([
             'username' => $username,
-            'password' => static::hashPassword($password),
+            'password' => hash('sha256', $password),
         ]);
     }
 
     /**
-     * All accounts joined with the owning employee's name.
-     *
-     * @return array[] rows of uuid, username, display_name, created_time (no password)
+     * The password hash must never leak into API responses; expose the
+     * owning employee's name as display_name instead.
      */
-    public static function allWithDisplayName(): array
+    public function fields(): array
     {
-        return (new Query())
-            ->select(['users.uuid', 'username', 'created_time', 'emp_name AS display_name'])
-            ->from('{{%users}}')
-            ->leftJoin('{{%employees}}', 'employees.emp_id = users.uuid')
-            ->orderBy(['username' => SORT_ASC])
-            ->all();
+        $fields = parent::fields();
+        unset($fields['password']);
+        $fields['display_name'] = function (User $model) {
+            $employee = $model->employee;
+            return $employee !== null ? $employee->emp_name : null;
+        };
+        return $fields;
     }
 
-    /**
-     * @return array|null row of uuid, username, display_name, created_time (no password)
-     */
-    public static function findWithDisplayName(string $uuid): ?array
+    public function beforeSave($insert): bool
     {
-        $row = (new Query())
-            ->select(['users.uuid', 'username', 'created_time', 'emp_name AS display_name'])
-            ->from('{{%users}}')
-            ->leftJoin('{{%employees}}', 'employees.emp_id = users.uuid')
-            ->where(['users.uuid' => $uuid])
-            ->one();
-        return $row ?: null;
+        if ($insert && empty($this->created_time)) {
+            $this->created_time = time();
+        }
+        return parent::beforeSave($insert);
     }
 }
