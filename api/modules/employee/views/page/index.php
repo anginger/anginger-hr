@@ -17,10 +17,10 @@ EmployeeAsset::register($this);
 <div x-data="employeePage()">
     <div class="page-head">
         <h1>員工管理</h1>
-        <button class="btn primary" @click="openCreate()">+ 新增員工</button>
+        <button class="ts-button" @click="openCreate()">+ 新增員工</button>
     </div>
-    <div class="card">
-        <table>
+    <div class="ts-box">
+        <table class="ts-table">
             <thead>
             <tr><th>姓名</th><th>部門</th><th>職稱</th><th>縣市</th><th>電話</th><th>月薪</th><th>年假</th><th></th></tr>
             </thead>
@@ -35,8 +35,8 @@ EmployeeAsset::register($this);
                     <td x-text="e.month_salary"></td>
                     <td x-text="e.annual_leave"></td>
                     <td>
-                        <button class="btn" @click="openEdit(e)">編輯</button>
-                        <button class="btn danger" @click="remove(e)">刪除</button>
+                        <button class="ts-button is-small is-outlined" @click="openEdit(e)">編輯</button>
+                        <button class="ts-button is-small is-negative" @click="remove(e)">刪除</button>
                     </td>
                 </tr>
             </template>
@@ -45,31 +45,33 @@ EmployeeAsset::register($this);
         </table>
     </div>
 
-    <div class="modal" x-show="mode !== 0" @click.self="mode = 0">
-        <div class="card modal-card">
+    <dialog class="ts-modal" :open="mode !== 0" @click.self="mode = 0">
+        <div class="content">
             <h2 x-text="mode === 1 ? '新增員工' : '編輯員工'"></h2>
             <p class="error" x-show="message" x-text="message"></p>
-            <label>姓名<input x-model="form.emp_name"></label>
-            <label>職稱<input x-model="form.job_title"></label>
-            <label>部門
-                <select x-model="form.dep_id">
-                    <template x-for="d in departments" :key="d.dep_id">
-                        <option :value="d.dep_id" x-text="d.dep_name"></option>
-                    </template>
-                </select>
+            <label class="app-field">姓名<div class="ts-input"><input x-model="form.emp_name"></div></label>
+            <label class="app-field">職稱<div class="ts-input"><input x-model="form.job_title"></div></label>
+            <label class="app-field">部門
+                <div class="ts-input">
+                    <select x-model="form.dep_id">
+                        <template x-for="d in departments" :key="d.dep_id">
+                            <option :value="d.dep_id" x-text="d.dep_name"></option>
+                        </template>
+                    </select>
+                </div>
             </label>
-            <label>縣市<input x-model="form.city"></label>
-            <label>地址<input x-model="form.address"></label>
-            <label>電話<input x-model="form.phone"></label>
-            <label>郵遞區號<input x-model="form.zip_code"></label>
-            <label>月薪<input type="number" x-model="form.month_salary"></label>
-            <label>年假天數<input type="number" x-model="form.annual_leave"></label>
-            <div class="row">
-                <button class="btn" @click="mode = 0">取消</button>
-                <button class="btn primary" @click="submit()" x-text="mode === 1 ? '送出' : '儲存'"></button>
+            <label class="app-field">縣市<div class="ts-input"><input x-model="form.city"></div></label>
+            <label class="app-field">地址<div class="ts-input"><input x-model="form.address"></div></label>
+            <label class="app-field">電話<div class="ts-input"><input x-model="form.phone"></div></label>
+            <label class="app-field">郵遞區號<div class="ts-input"><input x-model="form.zip_code"></div></label>
+            <label class="app-field">月薪<div class="ts-input"><input type="number" x-model="form.month_salary"></div></label>
+            <label class="app-field">年假天數<div class="ts-input"><input type="number" x-model="form.annual_leave"></div></label>
+            <div class="ts-buttons is-end-aligned">
+                <button class="ts-button is-outlined" @click="mode = 0">取消</button>
+                <button class="ts-button" @click="submit()" x-text="mode === 1 ? '送出' : '儲存'"></button>
             </div>
         </div>
-    </div>
+    </dialog>
 </div>
 <script>
     window.__ITEMS__ = <?= json_encode($items) ?>;

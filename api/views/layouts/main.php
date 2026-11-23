@@ -7,12 +7,12 @@
 
 use anginger\assets\AppAsset;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
 
 AppAsset::register($this);
+$path = Yii::$app->request->pathInfo;
 $this->beginPage();
 ?><!DOCTYPE html>
 <html lang="zh-Hant">
@@ -24,22 +24,26 @@ $this->beginPage();
 </head>
 <body>
 <?php $this->beginBody() ?>
-<header class="topbar">
-    <div class="brand">Anginger HR</div>
-    <nav class="nav">
-        <a href="<?= Url::to(['/site/index']) ?>">總覽</a>
-        <a href="<?= Url::to(['/employee']) ?>">員工</a>
-        <a href="<?= Url::to(['/department']) ?>">部門</a>
-        <a href="<?= Url::to(['/account']) ?>">帳號</a>
-    </nav>
-    <div class="user">
+<header class="ts-app-topbar">
+    <div class="start">
+        <div class="item is-text"><strong>Anginger HR</strong></div>
+    </div>
+    <div class="center">
+        <nav class="ts-menu">
+            <a class="item<?= $path === '' ? ' is-active' : '' ?>" href="/">總覽</a>
+            <a class="item<?= $path === 'employee' ? ' is-active' : '' ?>" href="/employee">員工</a>
+            <a class="item<?= $path === 'department' ? ' is-active' : '' ?>" href="/department">部門</a>
+            <a class="item<?= $path === 'account' ? ' is-active' : '' ?>" href="/account">帳號</a>
+        </nav>
+    </div>
+    <div class="end">
         <?php if (!Yii::$app->user->isGuest): ?>
-            <span><?= Html::encode(Yii::$app->user->identity->username) ?></span>
-            <a href="<?= Url::to(['/site/logout']) ?>">登出</a>
+            <div class="item is-text"><?= Html::encode(Yii::$app->user->identity->username) ?></div>
+            <a class="item" href="/site/logout">登出</a>
         <?php endif; ?>
     </div>
 </header>
-<main class="container">
+<main class="ts-container app-main">
     <?= $content ?>
 </main>
 <?php $this->endBody() ?>
