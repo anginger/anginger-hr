@@ -5,7 +5,7 @@
  * Licensed under the MIT License (https://opensource.org/licenses/MIT)
  */
 
-return [
+$config = [
     'id' => 'anginger-hr',
     'basePath' => __DIR__,
     'controllerNamespace' => 'anginger\\controllers',

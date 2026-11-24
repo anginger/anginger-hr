@@ -90,11 +90,25 @@ class AuthService
             $user->auth_source = 'ldap';
         }
         $user->ldap_dn = $ldap['dn'] ?? null;
-        if ($displayName !== null && $displayName !== '') {
-            $user->display_name = $displayName;
+        // profile attributes synced from the directory (per-app columns are
+        // detected with canSetProperty so the same code serves every app)
+        if ($user->canSetProperty('display_name')) {
+            $user->display_name = ($displayName !== null && $displayName !== '') ? $displayName : $username;
         }
-        if ($email !== null && $email !== '' && $user->canSetProperty('email')) {
-            $user->email = $email;
+        if ($user->canSetProperty('email')) {
+            $user->email = $email ?? '';
+        }
+        // app-specific required columns get safe defaults for LDAP accounts
+        if ($user->canSetProperty('role') && empty($user->role)) {
+            $user->role = 'user'; // anginger-ai: never provision admins from LDAP
+        }
+        if ($user->canSetProperty('level') && empty($user->level)) {
+            $user->level = 1;
+        }
+        foreach (['address', 'phone'] as $f) {
+            if ($user->canSetProperty($f) && $user->$f === null) {
+                $user->$f = '';
+            }
         }
         $user->save(false);
         return $user;
