@@ -11,15 +11,23 @@ use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
 /**
- * Login account. `uuid` is the owning employee's emp_id.
+ * Login account. `uuid` is the owning employee's emp_id for built-in accounts;
+ * LDAP-provisioned accounts get a uuidv7 instead.
  *
  * Passwords are stored as sha256 hashes, exactly like the old implementation
- * (keeps the seeded admin/admin account working).
+ * (keeps the seeded admin/admin account working). LDAP accounts have a NULL
+ * password and authenticate against the directory instead.
  *
  * @property string $uuid
  * @property string $username
- * @property string $password
+ * @property string|null $password
+ * @property string $auth_source local|ldap
+ * @property string|null $ldap_dn
+ * @property string|null $display_name
+ * @property string|null $email
+ * @property int $archived
  * @property int $created_time
+ * @property int|null $last_login_time
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -30,7 +38,12 @@ class User extends ActiveRecord implements IdentityInterface
 
     public static function findIdentity($id): ?IdentityInterface
     {
-        return static::findOne($id);
+        $user = static::findOne($id);
+        // archived accounts lose their session immediately
+        if ($user !== null && $user->archived) {
+            return null;
+        }
+        return $user;
     }
 
     public static function findIdentityByAccessToken($token, $type = null): ?IdentityInterface
@@ -79,6 +92,9 @@ class User extends ActiveRecord implements IdentityInterface
         $fields = parent::fields();
         unset($fields['password']);
         $fields['display_name'] = function (User $model) {
+            if (!empty($model->display_name)) {
+                return $model->display_name;
+            }
             $employee = $model->employee;
             return $employee !== null ? $employee->emp_name : null;
         };
