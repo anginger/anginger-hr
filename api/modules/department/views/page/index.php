@@ -17,10 +17,10 @@ DepartmentAsset::register($this);
 <div x-data="departmentPage()">
     <div class="page-head">
         <h1>部門管理</h1>
-        <button class="btn primary" @click="openCreate()">+ 新增部門</button>
+        <button class="ts-button" @click="openCreate()">+ 新增部門</button>
     </div>
-    <div class="card">
-        <table>
+    <div class="ts-box is-flush">
+        <table class="ts-table">
             <thead>
             <tr><th>部門代號</th><th>部門名稱</th><th>主管</th><th></th></tr>
             </thead>
@@ -31,8 +31,8 @@ DepartmentAsset::register($this);
                     <td x-text="d.dep_name"></td>
                     <td x-text="managerName(d.manager_emp_id)"></td>
                     <td>
-                        <button class="btn" @click="openEdit(d)">編輯</button>
-                        <button class="btn danger" @click="remove(d)">刪除</button>
+                        <button class="ts-button is-small is-outlined" @click="openEdit(d)">編輯</button>
+                        <button class="ts-button is-small is-negative is-outlined" @click="remove(d)">刪除</button>
                     </td>
                 </tr>
             </template>
@@ -41,26 +41,28 @@ DepartmentAsset::register($this);
         </table>
     </div>
 
-    <div class="modal" x-show="mode !== 0" @click.self="mode = 0">
-        <div class="card modal-card">
+    <dialog class="ts-modal" :open="mode !== 0" @click.self="mode = 0">
+        <form class="content" @submit.prevent="submit()">
             <h2 x-text="mode === 1 ? '新增部門' : '編輯部門'"></h2>
-            <p class="error" x-show="message" x-text="message"></p>
-            <label>部門名稱<input x-model="form.dep_name"></label>
-            <label>主管
-                <select x-model="form.manager_emp_id">
-                    <template x-for="e in employees" :key="e.emp_id">
-                        <option :value="e.emp_id" x-text="empLabel(e)"></option>
-                    </template>
-                </select>
+            <p class="error" aria-live="polite" x-show="message" x-text="message"></p>
+            <label class="app-field">部門名稱<div class="ts-input"><input name="dep_name" autocomplete="off" x-model="form.dep_name"></div></label>
+            <label class="app-field">主管
+                <div class="ts-input">
+                    <select name="manager_emp_id" x-model="form.manager_emp_id">
+                        <template x-for="e in employees" :key="e.emp_id">
+                            <option :value="e.emp_id" x-text="empLabel(e)"></option>
+                        </template>
+                    </select>
+                </div>
             </label>
-            <div class="row">
-                <button class="btn" @click="mode = 0">取消</button>
-                <button class="btn primary" @click="submit()" x-text="mode === 1 ? '送出' : '儲存'"></button>
+            <div class="ts-buttons is-end-aligned">
+                <button class="ts-button is-outlined" type="button" @click="mode = 0">取消</button>
+                <button class="ts-button" type="submit" x-text="mode === 1 ? '送出' : '儲存'"></button>
             </div>
-        </div>
-    </div>
+        </form>
+    </dialog>
 </div>
 <script>
-    window.__ITEMS__ = <?= json_encode($items) ?>;
-    window.__EMPLOYEES__ = <?= json_encode($employees) ?>;
+    window.__ITEMS__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($items)) ?>;
+    window.__EMPLOYEES__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($employees)) ?>;
 </script>

@@ -17,10 +17,10 @@ AccountAsset::register($this);
 <div x-data="accountPage()">
     <div class="page-head">
         <h1>帳號管理</h1>
-        <button class="btn primary" @click="openCreate()">+ 新增帳號</button>
+        <button class="ts-button" @click="openCreate()">+ 新增帳號</button>
     </div>
-    <div class="card">
-        <table>
+    <div class="ts-box is-flush">
+        <table class="ts-table">
             <thead>
             <tr><th>員工</th><th>帳號</th><th>建立時間</th><th></th></tr>
             </thead>
@@ -31,8 +31,8 @@ AccountAsset::register($this);
                     <td x-text="u.username"></td>
                     <td x-text="ts(u.created_time)"></td>
                     <td>
-                        <button class="btn" @click="openEdit(u)">編輯</button>
-                        <button class="btn danger" @click="remove(u)">刪除</button>
+                        <button class="ts-button is-small is-outlined" @click="openEdit(u)">編輯</button>
+                        <button class="ts-button is-small is-negative is-outlined" @click="remove(u)">刪除</button>
                     </td>
                 </tr>
             </template>
@@ -41,27 +41,29 @@ AccountAsset::register($this);
         </table>
     </div>
 
-    <div class="modal" x-show="mode !== 0" @click.self="mode = 0">
-        <div class="card modal-card">
+    <dialog class="ts-modal" :open="mode !== 0" @click.self="mode = 0">
+        <form class="content" @submit.prevent="submit()">
             <h2 x-text="mode === 1 ? '新增帳號' : '編輯帳號'"></h2>
-            <p class="error" x-show="message" x-text="message"></p>
-            <label>員工
-                <select x-model="form.uuid" :disabled="mode === 2">
-                    <template x-for="e in employees" :key="e.emp_id">
-                        <option :value="e.emp_id" x-text="empLabel(e)"></option>
-                    </template>
-                </select>
+            <p class="error" aria-live="polite" x-show="message" x-text="message"></p>
+            <label class="app-field">員工
+                <div class="ts-input">
+                    <select name="uuid" x-model="form.uuid" :disabled="mode === 2">
+                        <template x-for="e in employees" :key="e.emp_id">
+                            <option :value="e.emp_id" x-text="empLabel(e)"></option>
+                        </template>
+                    </select>
+                </div>
             </label>
-            <label>帳號<input x-model="form.username"></label>
-            <label>密碼（留空表示不變）<input type="password" x-model="form.password"></label>
-            <div class="row">
-                <button class="btn" @click="mode = 0">取消</button>
-                <button class="btn primary" @click="submit()" x-text="mode === 1 ? '送出' : '儲存'"></button>
+            <label class="app-field">帳號<div class="ts-input"><input name="username" autocomplete="off" spellcheck="false" x-model="form.username"></div></label>
+            <label class="app-field">密碼（留空表示不變）<div class="ts-input"><input type="password" name="password" autocomplete="new-password" x-model="form.password"></div></label>
+            <div class="ts-buttons is-end-aligned">
+                <button class="ts-button is-outlined" type="button" @click="mode = 0">取消</button>
+                <button class="ts-button" type="submit" x-text="mode === 1 ? '送出' : '儲存'"></button>
             </div>
-        </div>
-    </div>
+        </form>
+    </dialog>
 </div>
 <script>
-    window.__ITEMS__ = <?= json_encode($items) ?>;
-    window.__EMPLOYEES__ = <?= json_encode($employees) ?>;
+    window.__ITEMS__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($items)) ?>;
+    window.__EMPLOYEES__ = <?= json_encode(\yii\helpers\ArrayHelper::toArray($employees)) ?>;
 </script>
