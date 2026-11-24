@@ -6,19 +6,34 @@ document.addEventListener('alpine:init', () => {
         mode: 0,
         form: {},
         message: '',
+        ldap: false,
         empLabel(e) {
             return e.emp_name + ' (' + e.emp_id + ')';
         },
         ts(t) { return new Date(Number(t) * 1000).toLocaleString(); },
         async refresh() {
-            const [ra, re] = await Promise.all([
+            const [ra, re, rl] = await Promise.all([
                 fetch('/api/account/all', {credentials: 'same-origin'}),
-                fetch('/api/employee/all', {credentials: 'same-origin'})
+                fetch('/api/employee/all', {credentials: 'same-origin'}),
+                fetch('/api/authentic/ldap', {credentials: 'same-origin'})
             ]);
             if (ra.ok) this.items = await ra.json();
             if (re.ok) this.employees = await re.json();
+            if (rl.ok) { const d = await rl.json(); this.ldap = !!d.enabled; }
+        },
+        async toggleArchive(u) {
+            const archived = u.archived ? 0 : 1;
+            if (archived && !confirm('確定要封存帳號「' + u.username + '」嗎？封存後無法登入（含 LDAP），且現有連線會被中斷。')) return;
+            const r = await fetch('/api/account/archive', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({uuid: u.uuid, archived: String(archived)})
+            });
+            if (r.ok) await this.refresh();
         },
         openCreate() {
+            if (this.ldap) return; // built-in registration disabled while LDAP is on
             this.mode = 1;
             this.form = {uuid: this.employees.length ? this.employees[0].emp_id : '', username: '', password: ''};
             this.message = '';

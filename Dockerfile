@@ -5,7 +5,7 @@ RUN composer install --no-interaction --no-progress
 
 FROM alpine:3.16
 RUN apk add --no-cache nginx php8 php8-fpm php8-sqlite3 php8-mbstring php8-ctype \
-    php8-json php8-session php8-openssl php8-curl php8-fileinfo php8-xml php8-tokenizer \
+    php8-json php8-session php8-openssl php8-curl php8-fileinfo php8-xml php8-tokenizer php8-ldap \
     supervisor
 COPY ./conf/supervisord.conf /etc/supervisord.conf
 COPY ./conf/nginx.conf /etc/nginx/http.d/default.conf
