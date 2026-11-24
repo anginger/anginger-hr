@@ -28,7 +28,7 @@ AccountAsset::register($this);
             <tbody>
             <template x-for="u in items" :key="u.uuid">
                 <tr :class="{archived: u.archived}">
-                    <td x-text="u.display_name"></td>
+                    <td><span class="cell-user"><span class="avatar" x-text="(u.display_name || u.username || '?').charAt(0).toUpperCase()"></span><span x-text="u.display_name"></span></span></td>
                     <td x-text="u.username"></td>
                     <td><span class="ts-chip" :class="u.auth_source === 'ldap' ? 'm-ldap' : 'm-local'" x-text="u.auth_source === 'ldap' ? 'LDAP' : '本地'"></span></td>
                     <td><span class="ts-chip" :class="u.archived ? 'm-archived' : 'm-ok'" x-text="u.archived ? '已封存' : '正常'"></span></td>
