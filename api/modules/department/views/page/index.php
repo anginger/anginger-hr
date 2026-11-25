@@ -16,6 +16,7 @@ DepartmentAsset::register($this);
 ?>
 <div x-data="departmentPage()">
     <div class="page-head">
+        <div class="ts-input app-search"><input type="search" placeholder="搜尋…" x-model="q" aria-label="搜尋列表"></div>
         <h1>部門管理</h1>
         <button class="ts-button" @click="openCreate()">+ 新增部門</button>
     </div>
@@ -25,7 +26,7 @@ DepartmentAsset::register($this);
             <tr><th>部門代號</th><th>部門名稱</th><th>主管</th><th></th></tr>
             </thead>
             <tbody>
-            <template x-for="d in items" :key="d.dep_id">
+            <template x-for="d in filtered" :key="d.dep_id">
                 <tr>
                     <td x-text="d.dep_id"></td>
                     <td x-text="d.dep_name"></td>
@@ -36,7 +37,7 @@ DepartmentAsset::register($this);
                     </td>
                 </tr>
             </template>
-            <tr x-show="items.length === 0"><td colspan="4" class="empty">尚無資料</td></tr>
+            <tr x-show="filtered().length === 0"><td colspan="4" class="empty">尚無資料</td></tr>
             </tbody>
         </table>
     </div>
