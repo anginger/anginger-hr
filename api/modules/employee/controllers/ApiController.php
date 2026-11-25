@@ -22,6 +22,21 @@ use yii\web\Response;
  */
 class ApiController extends ResourceController
 {
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+        $identity = Yii::$app->user->identity;
+        if (!$identity instanceof User || !$identity->isAdmin()) {
+            Yii::$app->response->setStatusCode(403);
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            Yii::$app->response->data = ['message' => 'forbidden'];
+            return false;
+        }
+        return true;
+    }
+
     private const FIELDS = [
         'emp_name', 'job_title', 'dep_id', 'city', 'address',
         'phone', 'zip_code', 'month_salary', 'annual_leave',
