@@ -101,7 +101,11 @@ abstract class ResourceController extends BaseController
                 }
                 $model = $this->fillCreate($form);
                 try {
-                    return $model->save(false) ? $this->emptyResponse(201) : $this->serverError();
+                    if (!$model->save()) {
+                        Yii::$app->response->setStatusCode(400);
+                        return $this->asJson(["message" => "validation failed", "errors" => $model->errors]);
+                    }
+                    return $this->emptyResponse(201);
                 } catch (IntegrityException) {
                     return $this->conflict();
                 }
@@ -125,7 +129,11 @@ abstract class ResourceController extends BaseController
                 }
                 $this->fillUpdate($model, $form);
                 try {
-                    return $model->save(false) ? $this->emptyResponse(204) : $this->serverError();
+                    if (!$model->save()) {
+                        Yii::$app->response->setStatusCode(400);
+                        return $this->asJson(["message" => "validation failed", "errors" => $model->errors]);
+                    }
+                    return $this->emptyResponse(204);
                 } catch (IntegrityException) {
                     return $this->conflict();
                 }

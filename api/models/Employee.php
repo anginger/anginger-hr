@@ -32,4 +32,20 @@ class Employee extends ActiveRecord
     {
         return $this->hasOne(Department::class, ['dep_id' => 'dep_id']);
     }
+
+    public function rules(): array
+    {
+        return [
+            [["emp_id"], "required"],
+            [["emp_id"], "string", "max" => 36],
+            [["emp_name"], "string", "max" => 8],
+            [["job_title"], "string", "max" => 11],
+            [["dep_id"], "string", "max" => 9],
+            [["city"], "string", "max" => 7],
+            [["address"], "string", "max" => 32],
+            [["phone"], "string", "max" => 16],
+            [["zip_code"], "string", "max" => 3],
+            [["month_salary", "annual_leave"], "number"],
+        ];
+    }
 }

@@ -37,6 +37,7 @@ class ApiController extends ResourceController
             Yii::$app->response->setStatusCode(403);
             Yii::$app->response->format = Response::FORMAT_JSON;
             Yii::$app->response->data = ['message' => 'forbidden'];
+            $this->logHistory();
             return false;
         }
         return true;
@@ -139,6 +140,6 @@ class ApiController extends ResourceController
             return $this->forbidden();
         }
         // User::fields() hides the password hash and adds display_name
-        return $this->asJson(User::find()->orderBy(['username' => SORT_ASC])->all());
+        return $this->asJson(User::find()->with('employee')->orderBy(['username' => SORT_ASC])->all());
     }
 }

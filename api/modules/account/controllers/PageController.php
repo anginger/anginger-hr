@@ -15,7 +15,7 @@ class PageController extends PageBaseController
 {
     public function actionIndex(): string
     {
-        $items = User::find()->orderBy(['username' => SORT_ASC])->all();
+        $items = User::find()->with('employee')->orderBy(['username' => SORT_ASC])->all();
         $employees = Employee::find()->orderBy(['emp_name' => SORT_ASC])->all();
         return $this->render('index', ['items' => $items, 'employees' => $employees]);
     }
