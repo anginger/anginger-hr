@@ -51,7 +51,7 @@ api/
 環境變數一覽（AD 範例）：`LDAP_HOST`、`LDAP_PORT`（636=LDAPS）、`LDAP_BASE_DN`、
 `LDAP_BIND_DN`/`LDAP_BIND_PASSWORD`（服務帳號搜尋）或 `LDAP_USER_DN_PATTERN`（直接 bind）、
 `LDAP_USER_FILTER`（AD: `(sAMAccountName=%s)`）、`LDAP_USERNAME_ATTRIBUTE`（AD: `sAMAccountName`）、
-`LDAP_STARTTLS`、`LDAP_TIMEOUT`。需要 PHP **ext-ldap**（Docker image 已內建 `php8-ldap`）。
+`LDAP_STARTTLS`、`LDAP_TIMEOUT`、`LDAP_DISPLAY_NAME_ATTRIBUTE`（預設 `cn`）、`LDAP_EMAIL_ATTRIBUTE`（預設 `mail`）。需要 PHP **ext-ldap**（Docker image 已內建 `php8-ldap`）。
 
 ## Deploy / Render
 

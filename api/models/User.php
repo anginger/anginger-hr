@@ -108,6 +108,24 @@ public function fields(): array
         return $fields;
     }
 
+    public function rules(): array
+    {
+        return [
+            [['uuid', 'username'], 'required'],
+            [['uuid'], 'string', 'max' => 36],
+            [['username'], 'string', 'max' => 128],
+            [['username'], 'unique'],
+            [['password', 'ldap_dn'], 'string', 'max' => 255],
+            [['role'], 'in', 'range' => ['admin', 'user']],
+            [['auth_source'], 'in', 'range' => ['local', 'ldap']],
+            [['archived'], 'in', 'range' => [0, 1]],
+            [['created_time', 'last_login_time'], 'integer'],
+            [['display_name'], 'string', 'max' => 128],
+            [['email'], 'string', 'max' => 255],
+            [['email'], 'email'],
+        ];
+    }
+
     public function beforeSave($insert): bool
     {
         if ($insert && empty($this->created_time)) {

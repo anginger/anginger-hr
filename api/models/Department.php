@@ -30,4 +30,14 @@ class Department extends ActiveRecord
     {
         return $this->hasMany(Employee::class, ['dep_id' => 'dep_id']);
     }
+
+    public function rules(): array
+    {
+        return [
+            [["dep_id", "dep_name"], "required"],
+            [["dep_id", "dep_name"], "string", "max" => 9],
+            [["dep_name"], "unique"],
+            [["manager_emp_id"], "string", "max" => 36],
+        ];
+    }
 }
