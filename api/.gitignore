@@ -3,3 +3,4 @@ vendor/
 database.sqlite
 runtime/
 config.local.php
+.phpunit.result.cache

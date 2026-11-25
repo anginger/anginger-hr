@@ -2,6 +2,13 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('departmentPage', () => ({
         items: window.__ITEMS__ || [],
+        q: '',
+        filtered() {
+            const q = (this.q || '').trim().toLowerCase();
+            const list = this.items || this.conversations || [];
+            if (!q) return list;
+            return list.filter(row => JSON.stringify(row).toLowerCase().includes(q));
+        },
         employees: window.__EMPLOYEES__ || [],
         mode: 0,
         form: {},
@@ -49,7 +56,7 @@ document.addEventListener('alpine:init', () => {
             this.message = d.message || '操作失敗';
         },
         async remove(d) {
-            if (!confirm('確定要刪除「' + d.dep_name + '」嗎？')) return;
+            if (!(await appConfirm('確定要刪除「' + d.dep_name + '」嗎？'))) return;
             const r = await fetch('/api/department?dep_id=' + encodeURIComponent(d.dep_id), {
                 method: 'DELETE',
                 credentials: 'same-origin'
@@ -58,7 +65,7 @@ document.addEventListener('alpine:init', () => {
                 await this.refresh();
             } else {
                 const d2 = await r.json().catch(() => ({}));
-                alert(d2.message || '刪除失敗（該部門可能仍有員工）');
+                appToast(d2.message || '刪除失敗（該部門可能仍有員工）', 'error');
             }
         }
     }));

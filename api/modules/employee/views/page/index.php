@@ -16,6 +16,7 @@ EmployeeAsset::register($this);
 ?>
 <div x-data="employeePage()">
     <div class="page-head">
+        <div class="ts-input app-search"><input type="search" placeholder="搜尋…" x-model="q" aria-label="搜尋列表"></div>
         <h1>員工管理</h1>
         <button class="ts-button" @click="openCreate()">+ 新增員工</button>
     </div>
@@ -25,7 +26,7 @@ EmployeeAsset::register($this);
             <tr><th>姓名</th><th>部門</th><th>職稱</th><th>縣市</th><th>電話</th><th>月薪</th><th>年假</th><th></th></tr>
             </thead>
             <tbody>
-            <template x-for="e in items" :key="e.emp_id">
+            <template x-for="e in filtered" :key="e.emp_id">
                 <tr>
                     <td x-text="e.emp_name"></td>
                     <td x-text="depName(e.dep_id)"></td>
@@ -40,7 +41,7 @@ EmployeeAsset::register($this);
                     </td>
                 </tr>
             </template>
-            <tr x-show="items.length === 0"><td colspan="8" class="empty">尚無資料</td></tr>
+            <tr x-show="filtered().length === 0"><td colspan="8" class="empty">尚無資料</td></tr>
             </tbody>
         </table>
     </div>

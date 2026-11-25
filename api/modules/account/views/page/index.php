@@ -16,6 +16,7 @@ AccountAsset::register($this);
 ?>
 <div x-data="accountPage()" x-init="refresh()">
     <div class="page-head">
+        <div class="ts-input app-search"><input type="search" placeholder="搜尋…" x-model="q" aria-label="搜尋列表"></div>
         <h1>帳號管理</h1>
         <button class="ts-button" @click="openCreate()" :disabled="ldap" :title="ldap ? 'LDAP/AD 已啟用，帳號由目錄同步，無法手動新增' : ''">+ 新增帳號</button>
     </div>
@@ -26,7 +27,7 @@ AccountAsset::register($this);
             <tr><th>員工</th><th>帳號</th><th>來源</th><th>狀態</th><th>建立時間</th><th></th></tr>
             </thead>
             <tbody>
-            <template x-for="u in items" :key="u.uuid">
+            <template x-for="u in filtered" :key="u.uuid">
                 <tr :class="{archived: u.archived}">
                     <td><span class="cell-user"><span class="avatar" x-text="(u.display_name || u.username || '?').charAt(0).toUpperCase()"></span><span x-text="u.display_name"></span></span></td>
                     <td x-text="u.username"></td>
@@ -40,7 +41,7 @@ AccountAsset::register($this);
                     </td>
                 </tr>
             </template>
-            <tr x-show="items.length === 0"><td colspan="6" class="empty">尚無資料</td></tr>
+            <tr x-show="filtered().length === 0"><td colspan="6" class="empty">尚無資料</td></tr>
             </tbody>
         </table>
     </div>

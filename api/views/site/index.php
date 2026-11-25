@@ -44,7 +44,8 @@ $this->title = '總覽 - Anginger HR';
     </div>
 </div>
 <div class="ts-box" style="margin-bottom:1rem">
-    <div class="page-head"><h2>各部門人數</h2></div>
+    <div class="page-head">
+        <div class="ts-input app-search"><input type="search" placeholder="搜尋…" x-model="q" aria-label="搜尋列表"></div><h2>各部門人數</h2></div>
     <table class="ts-table">
         <thead><tr><th>部門</th><th>人數</th></tr></thead>
         <tbody>
