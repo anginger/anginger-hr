@@ -102,6 +102,15 @@ docker run -p 8888:8888 anginger-hr
 
 開啟 <http://localhost:8888/login>。容器啟動時自動執行 `php console.php migrate`。
 
+## Security
+
+- Session-based auth; all management pages/APIs are admin-only (403 otherwise). `User::fields()` never exposes the password hash or `ldap_dn`.
+- CSRF is enabled globally: the layout emits a meta token and `app-ui.js` injects `X-CSRF-Token` into every same-origin mutating fetch (missing token -> 400).
+- Passwords are bcrypt via `Yii::$app->security`; legacy sha256 hashes still verify and are transparently re-hashed on successful login.
+- Login rate limit: 5 failed attempts per IP+username per 15 minutes -> 429. Archived accounts get 423 and their existing sessions are invalidated immediately.
+- All view-embedded JSON goes through `Json::htmlEncode` (no `</script>` breakout); Alpine templates use `x-text`, never `x-html`.
+- SQLite runs in WAL mode with `foreign_keys=ON`; `GET /health` verifies the DB connection.
+
 ## Operational notes
 
 - Error codes: `401` 未登入、`403` 已登入但無權限（管理功能限 admin）、`423` 帳號已封存、`429` 登入嘗試過於頻繁（5 次 / 15 分鐘，鎖定後回 429）。
