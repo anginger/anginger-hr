@@ -12,6 +12,8 @@ use anginger\models\Department;
 use anginger\models\Employee;
 use yii\db\ActiveRecord;
 use yii\web\Response;
+use anginger\models\User;
+use Yii;
 
 /**
  * JSON API for departments:
@@ -20,6 +22,21 @@ use yii\web\Response;
  */
 class ApiController extends ResourceController
 {
+    public function beforeAction($action): bool
+    {
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+        $identity = Yii::$app->user->identity;
+        if (!$identity instanceof User || !$identity->isAdmin()) {
+            Yii::$app->response->setStatusCode(403);
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            Yii::$app->response->data = ['message' => 'forbidden'];
+            return false;
+        }
+        return true;
+    }
+
     protected function modelClass(): string
     {
         return Department::class;

@@ -18,3 +18,5 @@ RUN chown -R nginx:nginx /app/api && chmod -R a+rX /app/api && mkdir -p /app/api
 WORKDIR /app
 EXPOSE 8888
 CMD ["sh", "-c", "su -s /bin/sh nginx -c \"php84 /app/api/console.php migrate --interactive=0\" && exec /usr/bin/supervisord -c /etc/supervisord.conf"]
+
+HEALTHCHECK --interval=30s --timeout=3s CMD php -r "exit(@file_get_contents('http://127.0.0.1:80/health') === false ? 1 : 0);"

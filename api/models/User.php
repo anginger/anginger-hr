@@ -20,6 +20,7 @@ use yii\web\IdentityInterface;
  *
  * @property string $uuid
  * @property string $username
+ * @property string $role admin|user
  * @property string|null $password
  * @property string $auth_source local|ldap
  * @property string|null $ldap_dn
@@ -79,7 +80,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return static::findOne([
             'username' => $username,
-            'password' => hash('sha256', $password),
+            'password' => \anginger\components\AuthService::hashPassword($password),
         ]);
     }
 
@@ -87,10 +88,16 @@ class User extends ActiveRecord implements IdentityInterface
      * The password hash must never leak into API responses; expose the
      * owning employee's name as display_name instead.
      */
-    public function fields(): array
+        public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+public function fields(): array
     {
         $fields = parent::fields();
         unset($fields['password']);
+        unset($fields['ldap_dn']);
         $fields['display_name'] = function (User $model) {
             if (!empty($model->display_name)) {
                 return $model->display_name;

@@ -83,10 +83,10 @@ abstract class ResourceController extends BaseController
         switch ($request->method) {
             case 'GET':
                 $key = $request->getQueryParam($this->pkParam());
-                if ($key === null || $key === '') {
+                if (!is_scalar($key) || $key === '') {
                     return $this->badRequest();
                 }
-                $model = $modelClass::findOne($key);
+                $model = $modelClass::findOne([$this->pkParam() => (string)$key]);
                 return $model !== null ? $this->asJson($model) : $this->notFound();
 
             case 'POST':
@@ -113,7 +113,10 @@ abstract class ResourceController extends BaseController
                         return $this->badRequest();
                     }
                 }
-                $model = $modelClass::findOne($form[$this->pkParam()]);
+                if (!isset($form[$this->pkParam()]) || !is_scalar($form[$this->pkParam()])) {
+                    return $this->badRequest();
+                }
+                $model = $modelClass::findOne([$this->pkParam() => (string)$form[$this->pkParam()]]);
                 if ($model === null) {
                     return $this->notFound();
                 }
@@ -129,10 +132,10 @@ abstract class ResourceController extends BaseController
 
             case 'DELETE':
                 $key = $request->getQueryParam($this->pkParam());
-                if ($key === null || $key === '') {
+                if (!is_scalar($key) || $key === '') {
                     return $this->badRequest();
                 }
-                $model = $modelClass::findOne($key);
+                $model = $modelClass::findOne([$this->pkParam() => (string)$key]);
                 if ($model === null) {
                     return $this->notFound();
                 }
