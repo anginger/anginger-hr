@@ -10,6 +10,7 @@ namespace anginger\controllers;
 use anginger\models\Department;
 use anginger\models\Employee;
 use anginger\models\History;
+use anginger\models\User;
 use Yii;
 use yii\web\Response;
 
