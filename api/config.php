@@ -27,7 +27,16 @@ $config = [
         ],
         'request' => [
             // required for the session cookie
-            'cookieValidationKey' => getenv('COOKIE_VALIDATION_KEY') ?: 'anginger-dev-key-change-me-in-production',
+            'cookieValidationKey' => (function () {
+                $key = getenv('COOKIE_VALIDATION_KEY');
+                if (is_string($key) && $key !== '') {
+                    return $key;
+                }
+                if (getenv('YII_ENV') === 'prod') {
+                    throw new \yii\base\InvalidConfigException('COOKIE_VALIDATION_KEY is required when YII_ENV=prod');
+                }
+                return 'anginger-dev-key-change-me-in-production'; // dev only
+            })(),
             // the Alpine.js frontend posts URLSearchParams via fetch(); also accept JSON bodies
             'enableCsrfValidation' => true,
             'parsers' => [

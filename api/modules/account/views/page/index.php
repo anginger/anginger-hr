@@ -46,7 +46,7 @@ AccountAsset::register($this);
         </table>
     </div>
 
-    <dialog class="ts-modal" :open="mode !== 0" @click.self="mode = 0">
+    <dialog class="ts-modal" x-modal="mode !== 0" @modal-close="mode = 0" @click.self="mode = 0">
         <form class="content" @submit.prevent="submit()">
             <h2 x-text="mode === 1 ? '新增帳號' : '編輯帳號'"></h2>
             <p class="error" aria-live="polite" x-show="message" x-text="message"></p>

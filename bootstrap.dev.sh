@@ -6,6 +6,7 @@
 # Local development bootstrap: the whole app (server-rendered pages +
 # Alpine.js frontend + JSON API) is served by the PHP built-in server.
 set -e
+export YII_ENV=dev YII_DEBUG=true
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
